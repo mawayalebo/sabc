@@ -31,13 +31,13 @@ function Header() {
     <div 
       ref={navbarRef} 
       className={
-        `fixed top-0 left-0 z-10 w-full transition  will-change-transform duration-1000 delay-150 ease-in-out 
+        `fixed top-0 left-0 z-10 w-full transition duration-300 delay-150 ease-in
         ${
-          isScrolled ? 'bg-[#111111d8]' : 'py-4 bg-gradient-to-t from-[#222127] to-transparent/70'
+          isScrolled ? 'bg-[#111111d8]' : 'py-3 bg-gradient-to-b from-[#111111d8]  to-transparent to-97%'
         }`
       }
     >
-        <div className='mx-auto max-w-6xl p-5 flex items-center justify-start'>
+        <div className='mx-auto max-w-6xl p-4 flex items-center justify-start'>
             <Link href={'/'} onClick={() => handleClick('Home')}>
               <Image src={'/images/logo.png'} alt='logo' width={100} height={100}/>
             </Link>
