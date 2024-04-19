@@ -11,15 +11,7 @@ async function getChannelCatalogue() {
 export default async function ChannelCatalog() {
 
     const { data }= await getChannelCatalogue();
-    const catalog = data.map((x)=>{
-        return(
-            x.title
-        )
-
-    })
-
-    console.log(catalog)
-
+    
   return (
     <div>
         <div className='max-w-6xl mx-auto text-white'>
