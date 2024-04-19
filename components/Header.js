@@ -31,7 +31,7 @@ function Header() {
     <div 
       ref={navbarRef} 
       className={
-        `fixed top-0 left-0 w-full transition  will-change-transform duration-1000 delay-150 ease-in-out 
+        `fixed top-0 left-0 z-10 w-full transition  will-change-transform duration-1000 delay-150 ease-in-out 
         ${
           isScrolled ? 'bg-[#111111d8]' : 'py-4 bg-gradient-to-t from-[#222127] to-transparent/70'
         }`

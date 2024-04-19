@@ -12,7 +12,8 @@
     "next": "14.2.2",
     "puppeteer": "^22.6.5",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-responsive-carousel": "^3.2.23"
   },
   "devDependencies": {
     "postcss": "^8",

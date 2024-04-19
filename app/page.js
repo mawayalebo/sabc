@@ -1,8 +1,10 @@
+import Banner from "@/components/Banner";
 
 
 export default function Home() {
   return (
-    <main className="text-6xl">
+    <main className="">
+      <Banner/>
     
     </main>
   );
