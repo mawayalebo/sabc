@@ -12,7 +12,7 @@ function Banner() {
             <Image src={'/images/banner1.avif'} alt='banner image' width={100} height={100}/>    
             <Image src={'/images/banner2.avif'} alt='banner image' width={100} height={100}/>   
         </Carousel>
-        <div className='absolute top-0 w-full h-full bg-gradient-to-b from-[#111111] from-5% via-transparent to-[#222127] to-95%'>
+        <div className='absolute top-0 w-full h-full bg-gradient-to-b from-[#111111] from-5% via-transparent to-[#222127] to-85%'>
 
         </div>
     </div>
