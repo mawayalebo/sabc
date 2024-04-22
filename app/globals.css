@@ -19,5 +19,17 @@
     border-radius: 0px; 
     border: 2px solid #fff; 
   }
+
+  .swiper-pagination-bullet{
+    border-radius: 0 !important;
+    width: 25px !important;
+    height: 5px !important;
+  }
+  .swiper-pagination-bullet-active{
+    background-color: white !important;
+  }
+  .swiper-pagination{
+    text-align: left !important;
+  }
   
   

@@ -8,7 +8,7 @@ import Image from 'next/image';
 function Banner() {
   return (
     <div className='relative'> 
-        <Carousel autoPlay={true} interval={10000}>
+        <Carousel autoPlay={true} interval={10000} showThumbs={false} >
             <Image src={'/images/banner1.avif'} alt='banner image' width={100} height={100}/>    
             <Image src={'/images/banner2.avif'} alt='banner image' width={100} height={100}/>   
         </Carousel>

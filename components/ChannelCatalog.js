@@ -1,65 +1,73 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper';
 import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+
+import { useState, useEffect } from 'react';
+import {Swiper, SwiperSlide } from 'swiper/react';
+import Image from 'next/image';
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 
 
-async function getChannelCatalogue() {
-    const res = await fetch('http://localhost:3000/api/channel-catalog', {cache:"no-cache"});
-    return res.json();
-}
 
+function ChannelCatalog() {
+  const [channelCatalog, setChannelCatalog] = useState(null);
 
-export default async function ChannelCatalog() {
-    const [ channelCatalog, setChannelCatalog] = useState();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/channel-catalog');
+        const data = await response.json();
+        setChannelCatalog(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-    useEffect(() => {
-        async function getChannelCatalogue() {
-            const res = await fetch('http://localhost:3000/api/channel-catalog', {cache:"no-cache"});
-            setChannelCatalog(res.json());
-        }
-    }, [])
-    
-    
-    
+    if (typeof window !== 'undefined') { // Check if running on client-side
+      fetchData();
+    }
+  }, []);
+
   return (
     <div>
-        <div className='max-w-6xl mx-auto text-white'>
-            <div>
-                {
-                    channelCatalog &&
-                    channelCatalog.map(((group, index)=>{
-                        return(
-                            <div key={index}>
-                                <h2 className='text-4xl font-bold'>{group.title}</h2>
-                                <Swiper
-                                    spaceBetween={50}
-                                    slidesPerView={3}
-                                >
-                                {
-                                    group.list &&
-                                    group.list.map((item, index)=>{
-                                        return(
-                                            <SwiperSlide key={index} className='' >
-                                                <Image className='cursor-pointer' src={`https:${item.imgSource}`} alt="channel logo" width={250} height={200} loading='lazy' />
-                                            </SwiperSlide>
-                                        )
-                                    })
-                                }
+      <div className='max-w-6xl mx-auto text-white '>
 
-                                </Swiper>
-                            </div>
-                        )
-                    }))
-                }
-            </div>
-
-        </div>
-
+        {channelCatalog && (
+          <div>
+            {channelCatalog.data.map(((catalog, index) => (
+              <div key={index} className='mb-5'>
+                <h2 className='text-4xl font-semibold mb-4'>{catalog.title}</h2>
+                <div>
+                  {/* Client-side rendering with Swiper */}
+                  <Swiper
+                    modules={[Pagination]}
+                    spaceBetween={0}
+                    slidesPerView={5}
+                    pagination={{ clickable: true }}
+                  >
+                    {catalog.list.map((channels, index) => (
+                      <SwiperSlide key={index} className='rounded-md overflow-hidden flex justify-center items-center mr-10'>
+                        <Image
+                          src={`https:${channels.imgSource}`}
+                          alt='channel image'
+                          width={300}
+                          height={300}
+                          className='w-full cursor-pointer'
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
+              </div>
+            )))}
+          </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
+export default ChannelCatalog;
