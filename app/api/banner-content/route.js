@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 
 export async function GET() {
   const movieData = await scrapeMovieData('https://sabc-plus.com/catchup'); // Replace with actual URL
-  return new Response.json({ data: movieData });
+  return Response.json({ data: movieData });
 }
 
 async function scrapeMovieData(url) {

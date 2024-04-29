@@ -13,6 +13,12 @@ async function scrapeMovieData(url) {
 
     await page.goto(url);
 
+    // Simulate scrolling (adjust values as needed)
+    await page.evaluate(() => {
+      window.scrollBy(0, 1000); // Scroll down 1000 pixels
+      window.scrollBy(0, -500); // Scroll back up 500 pixels
+    });
+
     // Find the container element
     const dataContainer = await page.waitForSelector('ul#data-container');
     if (!dataContainer) {
