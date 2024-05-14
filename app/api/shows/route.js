@@ -11,61 +11,83 @@ async function scrapeMovieData(url) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
 
+  
+
     await page.goto(url);
+    let pageNumber = 2;
+    let targetAnchor = await page.waitForSelector(`a[data-page="${pageNumber}"]`);
+    // Loop to scroll and check for target anchor
+    while (targetAnchor) {
+      
+        // Found target anchor, proceed with scraping
+        console.log(`Found anchor tag with data-page: ${pageNumber}`);
+        targetAnchor = await page.waitForSelector(`a[data-page="${pageNumber}"]`);
+        const previousHeight = await page.evaluate('document.body.scrollHeight');
+        await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
+        await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`)
+        await new Promise((resolve)=> setTimeout(resolve,500));
+        
+        pageNumber ++
+        
+        if( pageNumber == 5){
+          break;
+        }
+        
+    }
 
-    // Simulate scrolling (adjust values as needed)
-    await page.evaluate(() => {
-      window.scrollBy(0, 1000); // Scroll down 1000 pixels
-      window.scrollBy(0, -500); // Scroll back up 500 pixels
-    });
-
+    console.log('fire last');
     // Find the container element
-    const dataContainer = await page.waitForSelector('ul#data-container');
-    if (!dataContainer) {
-      console.warn(`Could not find container element with ID 'data-container' on ${url}`);
-      return []; // Return empty array if not found
-    }
+        const dataContainer = await page.waitForSelector('ul#data-container');
+        if (!dataContainer) {
+          console.warn(`Could not find container element with ID 'data-container' on ${url}`);
+          return []; // Return empty array if not found
+        }
+        console.log('i shouldnt fire first')
+    
+        // Find all list items within the container
+        const movieListItems = await dataContainer.$$('li');
+    
+        const scrapedMovies = [];
+        for (const movieListItem of movieListItems) {
+          const movieData = {};
+    
+          // Find the desired elements within each list item
+          const movieAnchor = await movieListItem.$('.movies-slide-img');
+          if (movieAnchor) {
+            movieData.href = await movieAnchor.evaluate(anchor => anchor.getAttribute('href'));
+            const movieImage = await movieAnchor.$('img');
+            if (movieImage) {
+              movieData.src = await movieImage.evaluate(img => img.getAttribute('src'));
+            }
+          }
+    
+          const showDetails = await movieListItem.$('.show-details');
+          if (showDetails) {
+            movieData.title = await showDetails.$eval('h6', h6 => h6.textContent.trim());
+            const categorySpan = await showDetails.$eval('.category span', span => span.textContent.trim());
+            if (categorySpan) {
+              movieData.category = categorySpan;
+            }
+            const otherSpans = await showDetails.$$('.other span');
+            for (const span of otherSpans) {
+              const spanClass = await span.evaluate(span => span.getAttribute('class').split(' '));
+              if (spanClass.includes('pegi')) {
+                movieData.pegi = await span.evaluate(span => span.textContent.trim());
+              } else if (spanClass.includes('quality')) {
+                movieData.quality = await span.evaluate(span => span.textContent.trim());
+              }
+            }
+          }
+    
+          scrapedMovies.push(movieData);
+        }
+    
+        await browser.close();
+        return scrapedMovies;
 
-    // Find all list items within the container
-    const movieListItems = await dataContainer.$$('li');
-
-    const scrapedMovies = [];
-    for (const movieListItem of movieListItems) {
-      const movieData = {};
-
-      // Find the desired elements within each list item
-      const movieAnchor = await movieListItem.$('.movies-slide-img');
-      if (movieAnchor) {
-        movieData.href = await movieAnchor.evaluate(anchor => anchor.getAttribute('href'));
-        const movieImage = await movieAnchor.$('img');
-        if (movieImage) {
-          movieData.src = await movieImage.evaluate(img => img.getAttribute('src'));
-        }
-      }
-
-      const showDetails = await movieListItem.$('.show-details');
-      if (showDetails) {
-        movieData.title = await showDetails.$eval('h6', h6 => h6.textContent.trim());
-        const categorySpan = await showDetails.$eval('.category span', span => span.textContent.trim());
-        if (categorySpan) {
-          movieData.category = categorySpan;
-        }
-        const otherSpans = await showDetails.$$('.other span');
-        for (const span of otherSpans) {
-          const spanClass = await span.evaluate(span => span.getAttribute('class').split(' '));
-          if (spanClass.includes('pegi')) {
-            movieData.pegi = await span.evaluate(span => span.textContent.trim());
-          } else if (spanClass.includes('quality')) {
-            movieData.quality = await span.evaluate(span => span.textContent.trim());
-          }
-        }
-      }
-
-      scrapedMovies.push(movieData);
-    }
-
-    await browser.close();
-    return scrapedMovies;
+    
+      
+ 
   } catch (error) {
     console.error('error on the backend api', error);
     return []; // Return empty array on error
