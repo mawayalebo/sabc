@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { GoTriangleDown } from 'react-icons/go'
 
 async function getCatchupShows(){
-  const res = await fetch('http://localhost:3000/api/shows');
+  const res = await fetch('http://localhost:3000/api/shows', { cache: 'no-cache'});
 
   return res.json();
 
